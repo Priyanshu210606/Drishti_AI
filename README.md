@@ -173,13 +173,12 @@ docker-compose up --build
 
 This repository includes Vercel configuration for the FastAPI application, model checkpoints, and Python 3.12 runtime.
 
-1. Fork this repository to your GitHub account and push these deployment files to the fork.
-2. Import the fork in [Vercel](https://vercel.com/new). Vercel should detect the FastAPI app and install dependencies from `requirements.txt`.
-3. Do not set `DEVICE` in Vercel; the app automatically selects CUDA when PyTorch detects an available GPU, otherwise it uses CPU. Vercel Functions currently run this app on CPU.
-4. Add `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` as an environment variable so the PyTorch runtime can use Vercel's large-function support if it exceeds the standard Python bundle limit.
-5. Deploy, then open the HTTPS URL Vercel provides. Allow camera access in the browser.
+1. Push the repository to GitHub and import it in [Vercel](https://vercel.com/new). Select the repository root and the FastAPI preset.
+2. Leave Build Command and Output Directory at their defaults. The repository's `vercel.json` selects `requirements-vercel.txt`, which installs CPU-only PyTorch wheels.
+3. Vercel's standard Python function bundle limit is 500 MB, smaller than this app's CPU-only PyTorch bundle. Enable Vercel's Large Functions beta for the project by setting `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` in Project Settings > Environment Variables. If Vercel does not allow this setting for the account, this model-backed app cannot fit the standard function limit.
+4. Deploy, then open the HTTPS URL Vercel provides. Allow camera access in the browser.
 
-Vercel's Hobby plan is intended for personal, non-commercial projects. WebSocket support is currently in beta, and Hobby function invocations are limited to five minutes. The browser reconnects when a connection closes, but a reconnect starts a new inference session and clears its temporal history. Vercel usage quotas and function memory limits also apply.
+Vercel Functions currently run this deployment on CPU. PyTorch will automatically use CUDA on other hosts where a CUDA-capable GPU is available, and CPU otherwise. Vercel's Hobby plan is intended for personal, non-commercial projects. WebSocket support is currently in beta, and Hobby function invocations are limited to five minutes. The browser reconnects when a connection closes, but a reconnect starts a new inference session and clears its temporal history. Vercel usage quotas and function bundle limits also apply.
 
 The deployed site is public and sends camera frames to the hosted server for inference. Do not use it with sensitive video or rely on its output as a substitute for a cane, guide dog, or personal safety awareness.
 
