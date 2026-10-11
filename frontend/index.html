@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drishti AI - Assistive Vision Navigation</title>
+    <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+    <header class="app-header" role="banner">
+        <div class="logo-area">
+            <h1 class="app-title" tabindex="0">DRISHTI AI</h1>
+            <p class="app-tagline">See the world through sound</p>
+        </div>
+        <div class="status-badge-container">
+            <span id="connectionStatus" class="status-pill status-ready" role="status" aria-live="polite">
+                <span class="status-dot"></span> <span id="statusText">System Ready</span>
+            </span>
+        </div>
+    </header>
+
+    <main class="main-content" role="main">
+        <!-- Live Navigation Announcement Banner (Primary Accessible Region) -->
+        <section class="announcement-card" aria-label="Current Navigation Instructions">
+            <h2 class="sr-only">Current Navigation Guidance</h2>
+            <div id="liveAnnouncement" class="announcement-text" role="alert" aria-live="assertive" tabindex="0">
+                Press "Start Assistance" to begin navigation guidance.
+            </div>
+            <div class="announcement-meta">
+                <span id="pathPill" class="path-pill path-clear">PATH: READY</span>
+                <span id="modelPill" class="model-pill">MODEL: DUAL GATE</span>
+                <span id="speechModePill" class="mode-pill">NORMAL MODE</span>
+            </div>
+        </section>
+
+        <!-- Primary Action Controls (High-contrast, Large touch targets) -->
+        <section class="controls-container" aria-label="Navigation Controls">
+            <button id="toggleBtn" class="btn btn-primary btn-large" aria-label="Start Assistance">
+                <span class="btn-icon">▶</span>
+                <span id="toggleBtnText">START ASSISTANCE</span>
+            </button>
+
+            <div class="secondary-controls">
+                <button id="switchCamBtn" class="btn btn-secondary" aria-label="Switch between Rear and Front Camera">
+                    <span class="btn-icon">📷</span> Switch Camera
+                </button>
+                <button id="testAudioBtn" class="btn btn-secondary" aria-label="Test Speech and Audio Output">
+                    <span class="btn-icon">🔊</span> Test Audio
+                </button>
+                <button id="openSettingsBtn" class="btn btn-secondary" aria-label="Open Accessibility Settings">
+                    <span class="btn-icon">⚙</span> Settings
+                </button>
+            </div>
+        </section>
+
+        <!-- Camera Preview & Detection Overlay -->
+        <section class="viewport-section" aria-label="Camera Video Preview">
+            <div class="camera-wrapper">
+                <video id="videoPreview" autoplay playsinline muted aria-hidden="true"></video>
+                <canvas id="overlayCanvas" aria-hidden="true"></canvas>
+                <div id="cameraStandby" class="camera-standby">
+                    <p>Camera Standby</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Diagnostics (Collapsible for developers/caregivers) -->
+        <section class="diagnostics-section" aria-label="Technical Details">
+            <details id="diagnosticsDetails">
+                <summary class="diagnostics-summary" aria-label="Toggle Technical Diagnostics">
+                    <span>Technical Diagnostics</span>
+                    <span id="fpsDisplay" class="fps-tag">0.0 FPS</span>
+                </summary>
+                <div class="diagnostics-body">
+                    <div class="diag-grid">
+                        <div class="diag-item"><strong>Selected Model:</strong> <span id="diagModel">-</span></div>
+                        <div class="diag-item"><strong>Model Confidence:</strong> <span id="diagConfidence">-</span></div>
+                        <div class="diag-item"><strong>Agreement Score:</strong> <span id="diagAgreement">-</span></div>
+                        <div class="diag-item"><strong>Total Latency:</strong> <span id="diagTotalLatency">0 ms</span></div>
+                        <div class="diag-item"><strong>Detection Latency:</strong> <span id="diagDetectLatency">0 ms</span></div>
+                        <div class="diag-item"><strong>Mamba Latency:</strong> <span id="diagMambaLatency">0 ms</span></div>
+                        <div class="diag-item"><strong>Transformer Latency:</strong> <span id="diagTransLatency">0 ms</span></div>
+                        <div class="diag-item"><strong>Detected Obstacles:</strong> <span id="diagObstacleCount">0</span></div>
+                    </div>
+                    <div class="diag-objects">
+                        <strong>Identified Scene Objects:</strong>
+                        <ul id="diagObjectList" class="object-list">
+                            <li>None detected</li>
+                        </ul>
+                    </div>
+                </div>
+            </details>
+        </section>
+    </main>
+
+    <!-- Accessible Settings Modal -->
+    <div id="settingsModal" class="modal-backdrop is-hidden" style="display: none;" hidden role="dialog" aria-modal="true" aria-labelledby="settingsTitle" onclick="if(event.target === this) closeSettingsModal();">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="settingsTitle">Accessibility & Speech Settings</h2>
+                <button type="button" class="modal-close-btn" onclick="closeSettingsModal();" aria-label="Close settings">✕</button>
+            </div>
+
+            <div class="setting-group">
+                <label for="verbositySelect">Speech Verbosity Mode:</label>
+                <select id="verbositySelect" class="form-select">
+                    <option value="brief">Brief ("Pole, 1.8m, right")</option>
+                    <option value="normal" selected>Normal ("Pole ahead, 1.8m away, slightly right")</option>
+                    <option value="detailed">Detailed ("Pole detected 1.8m ahead at 14 degrees right")</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label for="speechRate">Speech Speed: <span id="rateValue">1.0x</span></label>
+                <input type="range" id="speechRate" min="0.7" max="1.6" step="0.1" value="1.0" class="form-range">
+            </div>
+
+            <div class="setting-group">
+                <label for="speechVolume">Speech Volume: <span id="volValue">100%</span></label>
+                <input type="range" id="speechVolume" min="0.2" max="1.0" step="0.1" value="1.0" class="form-range">
+            </div>
+
+            <div class="setting-group">
+                <label for="speechInterval">Minimum Announcement Interval: <span id="intervalValue">2.0s</span></label>
+                <input type="range" id="speechInterval" min="1.0" max="5.0" step="0.5" value="2.0" class="form-range">
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" id="closeSettingsBtn" class="btn btn-primary" onclick="closeSettingsModal();">Save & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- First-Time Onboarding & Safety Disclaimer Modal -->
+    <div id="onboardingModal" class="modal-backdrop is-hidden" style="display: none;" hidden role="dialog" aria-modal="true" aria-labelledby="onboardTitle" onclick="if(event.target === this) dismissOnboarding();">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="onboardTitle">Welcome to Drishti AI</h2>
+                <button type="button" class="modal-close-btn" onclick="dismissOnboarding();" aria-label="Close welcome notice">✕</button>
+            </div>
+            <div class="onboard-content">
+                <p><strong>Drishti AI</strong> is an assistive computer-vision system designed to provide real-time audio guidance about obstacles ahead of you.</p>
+                <ul class="onboard-steps">
+                    <li>Grant camera access when prompted.</li>
+                    <li>Point your device forward in the direction you are walking.</li>
+                    <li>Listen to the continuous voice navigation and safety alerts.</li>
+                </ul>
+                <div class="safety-box">
+                    <strong>Important Safety Notice:</strong>
+                    <p>Drishti AI provides AI-generated environmental guidance and may make mistakes. It is an assistive tool and does NOT replace a cane, guide dog, or personal safety awareness.</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="acceptOnboardBtn" class="btn btn-primary btn-large" onclick="dismissOnboarding();">I Understand — Begin</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="app-footer" role="contentinfo">
+        <p>Drishti AI Assistive Vision • Dual Mamba & Transformer Confidence Pipeline</p>
+    </footer>
+
+    <!-- Safe Inline Fallback Handlers -->
+    <script>
+        function dismissOnboarding() {
+            var m = document.getElementById('onboardingModal');
+            if (m) {
+                m.style.setProperty('display', 'none', 'important');
+                m.hidden = true;
+                m.classList.add('is-hidden');
+            }
+            try { localStorage.setItem('drishti_onboarded', 'true'); } catch(e) {}
+            try {
+                if (window.speechEngine) {
+                    window.speechEngine.playStartCue();
+                    window.speechEngine.speak("Welcome to Drishti AI. Press Start Assistance to begin.", "INFO");
+                }
+            } catch(e) {}
+        }
+        function closeSettingsModal() {
+            var m = document.getElementById('settingsModal');
+            if (m) {
+                m.style.setProperty('display', 'none', 'important');
+                m.hidden = true;
+                m.classList.add('is-hidden');
+            }
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                dismissOnboarding();
+                closeSettingsModal();
+            }
+        });
+    </script>
+
+    <!-- Scripts with Cache-Busters -->
+    <script src="speech.js?v=2"></script>
+    <script src="camera.js?v=2"></script>
+    <script src="websocket.js?v=2"></script>
+    <script src="app.js?v=2"></script>
+</body>
+</html>

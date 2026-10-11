@@ -1,0 +1,405 @@
+:root {
+    --bg-dark: #0e0f12;
+    --card-bg: #1a1c22;
+    --card-border: #2e323d;
+    --text-primary: #ffffff;
+    --text-muted: #b0b5c0;
+    --color-accent: #ffbe0b;
+    --color-success: #00e676;
+    --color-warning: #ff9100;
+    --color-danger: #ff1744;
+    --btn-primary-bg: #ffd166;
+    --btn-primary-text: #0e0f12;
+    --btn-danger-bg: #ff1744;
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: var(--font-stack);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+
+/* Accessibility Focus Ring */
+button:focus-visible, select:focus-visible, input:focus-visible, [tabindex="0"]:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Header */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--card-border);
+    margin-bottom: 20px;
+}
+
+.app-title {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--color-accent);
+}
+
+.app-tagline {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: 1px solid var(--card-border);
+    background-color: var(--card-bg);
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+}
+
+.status-ready .status-dot { background-color: var(--color-accent); }
+.status-active .status-dot { background-color: var(--color-success); box-shadow: 0 0 10px var(--color-success); }
+.status-error .status-dot { background-color: var(--color-danger); }
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Live Announcement Region */
+.announcement-card {
+    background-color: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.announcement-text {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    line-height: 1.35;
+}
+
+.announcement-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--card-border);
+}
+
+.path-pill, .model-pill, .mode-pill {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.path-clear { background-color: rgba(0, 230, 118, 0.2); color: var(--color-success); border: 1px solid var(--color-success); }
+.path-blocked { background-color: rgba(255, 23, 68, 0.2); color: var(--color-danger); border: 1px solid var(--color-danger); }
+.path-caution { background-color: rgba(255, 145, 0, 0.2); color: var(--color-warning); border: 1px solid var(--color-warning); }
+
+.model-pill { background-color: rgba(255, 190, 11, 0.15); color: var(--color-accent); border: 1px solid var(--color-accent); }
+.mode-pill { background-color: rgba(255, 255, 255, 0.1); color: var(--text-muted); }
+
+/* Controls */
+.controls-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.btn {
+    border: none;
+    border-radius: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-large {
+    min-height: 68px;
+    font-size: 1.35rem;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+}
+
+.btn-primary:hover {
+    background-color: #ffe08a;
+}
+
+.btn-danger {
+    background-color: var(--btn-danger-bg);
+    color: white;
+}
+
+.secondary-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.btn-secondary {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--card-border);
+    min-height: 52px;
+    font-size: 1rem;
+}
+
+.btn-secondary:hover {
+    border-color: var(--color-accent);
+}
+
+/* Viewport Preview */
+.viewport-section {
+    background-color: #000000;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--card-border);
+    position: relative;
+    max-height: 380px;
+}
+
+.camera-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#videoPreview {
+    width: 100%;
+    height: auto;
+    max-height: 380px;
+    object-fit: cover;
+    display: block;
+}
+
+#overlayCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.camera-standby {
+    position: absolute;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* Diagnostics */
+.diagnostics-section {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    padding: 12px 16px;
+}
+
+.diagnostics-summary {
+    cursor: pointer;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fps-tag {
+    font-size: 0.85rem;
+    color: var(--color-success);
+    background-color: rgba(0, 230, 118, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.diagnostics-body {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--card-border);
+}
+
+.diag-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.diag-objects {
+    margin-top: 12px;
+    font-size: 0.9rem;
+}
+
+.object-list {
+    margin-top: 6px;
+    padding-left: 20px;
+    color: var(--text-muted);
+}
+
+/* Modals */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 1000;
+}
+
+.modal-backdrop[hidden],
+.modal-backdrop.is-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.modal-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+}
+
+.modal-close-btn:hover,
+.modal-close-btn:focus {
+    color: var(--text-primary);
+    background-color: var(--card-border);
+}
+
+.modal-box {
+    background-color: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    padding: 24px;
+}
+
+.modal-box h2 {
+    color: var(--color-accent);
+    margin-bottom: 18px;
+}
+
+.setting-group {
+    margin-bottom: 16px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.form-select, .form-range {
+    width: 100%;
+    background-color: var(--bg-dark);
+    color: white;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+.safety-box {
+    background-color: rgba(255, 145, 0, 0.15);
+    border-left: 4px solid var(--color-warning);
+    padding: 12px;
+    margin-top: 14px;
+    font-size: 0.9rem;
+}
+
+.modal-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 24px;
+}
