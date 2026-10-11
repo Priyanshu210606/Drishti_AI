@@ -174,8 +174,8 @@ docker-compose up --build
 This repository includes Vercel configuration for the FastAPI application, model checkpoints, and Python 3.12 runtime.
 
 1. Push the repository to GitHub and import it in [Vercel](https://vercel.com/new). Select the repository root and the FastAPI preset.
-2. Leave Build Command and Output Directory at their defaults. The repository's `vercel.json` selects `requirements-vercel.txt`, which installs CPU-only PyTorch wheels.
-3. Vercel's standard Python function bundle limit is 500 MB, smaller than this app's CPU-only PyTorch bundle. Enable Vercel's Large Functions beta for the project by setting `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` in Project Settings > Environment Variables. If Vercel does not allow this setting for the account, this model-backed app cannot fit the standard function limit.
+2. Leave Build Command, Output Directory, and Install Command at their defaults so Vercel can optimize the Python function bundle. Vercel installs the dependencies from `requirements.txt`.
+3. If Vercel still reports that the function bundle exceeds its size limit, check the deployment's build logs before changing dependency settings.
 4. Deploy, then open the HTTPS URL Vercel provides. Allow camera access in the browser.
 
 Vercel Functions currently run this deployment on CPU. PyTorch will automatically use CUDA on other hosts where a CUDA-capable GPU is available, and CPU otherwise. Vercel's Hobby plan is intended for personal, non-commercial projects. WebSocket support is currently in beta, and Hobby function invocations are limited to five minutes. The browser reconnects when a connection closes, but a reconnect starts a new inference session and clears its temporal history. Vercel usage quotas and function bundle limits also apply.
