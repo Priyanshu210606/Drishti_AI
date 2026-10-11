@@ -169,6 +169,20 @@ Open `http://localhost:8000` in any web browser.
 docker-compose up --build
 ```
 
+### 5. Deploying to Vercel
+
+This repository includes Vercel configuration for the FastAPI application, model checkpoints, and Python 3.12 runtime.
+
+1. Fork this repository to your GitHub account and push these deployment files to the fork.
+2. Import the fork in [Vercel](https://vercel.com/new). Vercel should detect the FastAPI app and install dependencies from `requirements.txt`.
+3. Do not set `DEVICE` in Vercel; the app automatically selects CUDA when PyTorch detects an available GPU, otherwise it uses CPU. Vercel Functions currently run this app on CPU.
+4. Add `VERCEL_SUPPORT_LARGE_FUNCTIONS=1` as an environment variable so the PyTorch runtime can use Vercel's large-function support if it exceeds the standard Python bundle limit.
+5. Deploy, then open the HTTPS URL Vercel provides. Allow camera access in the browser.
+
+Vercel's Hobby plan is intended for personal, non-commercial projects. WebSocket support is currently in beta, and Hobby function invocations are limited to five minutes. The browser reconnects when a connection closes, but a reconnect starts a new inference session and clears its temporal history. Vercel usage quotas and function memory limits also apply.
+
+The deployed site is public and sends camera frames to the hosted server for inference. Do not use it with sensitive video or rely on its output as a substitute for a cane, guide dog, or personal safety awareness.
+
 ---
 
 ## Running Verification Tests
