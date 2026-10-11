@@ -2,9 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "app/main.py": {
-      "includeFiles": [
-        "*.pt"
-      ],
+      "includeFiles": "*.pt",
       "maxDuration": 300
     }
   }
